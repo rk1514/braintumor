@@ -12,8 +12,7 @@ import qrcode
 # App config
 st.set_page_config(page_title="Brain Tumor Detection", page_icon="🧠", layout="centered")
 
-# OpenAI API Key (for Chatbot Assistance)
-openai.api_key = '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'
+\
 
 # Roboflow Client
 CLIENT = InferenceHTTPClient(
@@ -30,7 +29,7 @@ st.markdown("""
     .header-img {
         width: 100%;
         height: 700px;
-        background: url('https://th.bing.com/th/id/OIP.xYrQ8Rd-tCPzzdvZOfNNoAHaHa?w=500&h=500&rs=1&pid=ImgDetMain') no-repeat center center;
+        background: url('https://th.bing.com/th/id/OIP._8eGDGy8q02rSWkuvrrhhAHaEw?rs=1&pid=ImgDetMain') no-repeat center center;
         background-size: cover;
         animation: fadeIn 2s ease-in-out;
     }
