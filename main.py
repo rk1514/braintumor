@@ -8,80 +8,11 @@ import openai
 import pandas as pd
 from datetime import datetime
 import qrcode
-from googletrans import Translator
 import time
 
 
 # App config
 st.set_page_config(page_title="Brain Tumor Detection", page_icon="🧠", layout="centered")
-
-# Initialize Translator object
-translator = Translator()
-
-translations = {
-    "en": {
-        "title": "Brain Tumor Detection",
-        "instructions": """
-        1. Upload a brain MRI image (JPG/PNG).
-        2. Click **Detect Tumor**.
-        3. View AI predictions.
-        4. Download PDF Report.
-        """,
-        "upload_text": "Upload your MRI scan image for AI-based analysis.",
-        "patient_info": "Patient Information",
-        "medical_history": "Medical History",
-        "data_privacy": "Data Privacy & Consent",
-        "detect_tumor": "🔍 Detect Tumor",
-        "thank_you_feedback": "Thank you for your feedback! Rating: {rating} stars",
-        "contact_us": "📞 Contact Us",
-    },
-    "es": {  # Spanish Translation
-        "title": "Detección de Tumor Cerebral",
-        "instructions": """
-        1. Cargue una imagen de MRI cerebral (JPG/PNG).
-        2. Haga clic en **Detectar Tumor**.
-        3. Ver predicciones de IA.
-        4. Descargar informe en PDF.
-        """,
-        "upload_text": "Suba su imagen de MRI para el análisis basado en IA.",
-        "patient_info": "Información del Paciente",
-        "medical_history": "Historial Médico",
-        "data_privacy": "Privacidad de los Datos y Consentimiento",
-        "detect_tumor": "🔍 Detectar Tumor",
-        "thank_you_feedback": "¡Gracias por su retroalimentación! Calificación: {rating} estrellas",
-        "contact_us": "📞 Contáctenos",
-    },
-    "ne": {  # Nepali Translation
-        "title": "मस्तिष्क ट्यूमर पत्ता लगाउने",
-        "instructions": """
-        १. मस्तिष्क MRI इमेज (JPG/PNG) अपलोड गर्नुहोस्।
-        २. **ट्यूमर पत्ता लगाउनुहोस्** क्लिक गर्नुहोस्।
-        ३. एआई भविष्यवाणीहरू हेर्नुहोस्।
-        ४. PDF रिपोर्ट डाउनलोड गर्नुहोस्।
-        """,
-        "upload_text": "एआई आधारित विश्लेषणको लागि तपाईंको MRI स्क्यान इमेज अपलोड गर्नुहोस्।",
-        "patient_info": "रोगीको जानकारी",
-        "medical_history": "चिकित्सा इतिहास",
-        "data_privacy": "डेटा गोपनीयता र सहमति",
-        "detect_tumor": "🔍 ट्यूमर पत्ता लगाउनुहोस्",
-        "thank_you_feedback": "तपाईंको प्रतिक्रिया को लागि धन्यवाद! रेटिंग: {rating} ताराहरू",
-        "contact_us": "📞 हामीसँग सम्पर्क गर्नुहोस्",
-    },
-}
-
-# Language Selector
-language = st.selectbox("Choose your language", options=["English", "Español", "नेपाली"], index=0)
-lang_key = "en" if language == "English" else "es" if language == "Español" else "ne"
-
-# Title and Instructions Section with Dynamic Text
-st.markdown(f"""
-    <div class="content-section">
-        <p>{translations[lang_key]["upload_text"]}</p>
-    </div>
-""", unsafe_allow_html=True)
-  
-# App Title with Translation
-st.title(f"{translations[lang_key]['title']}")
 
 
 # Roboflow Client
