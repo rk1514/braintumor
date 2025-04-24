@@ -13,12 +13,12 @@ import qrcode
 st.set_page_config(page_title="Brain Tumor Detection", page_icon="🧠", layout="centered")
 
 # OpenAI API Key (for Chatbot Assistance)
-openai.api_key = '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'
+openai.api_key = 'your-api-key-here'
 
 # Roboflow Client
 CLIENT = InferenceHTTPClient(
     api_url="https://outline.roboflow.com",
-    api_key="AUriIUOQuEbHt8npqPyt"
+    api_key="your-api-key-here"
 )
 
 # Custom HTML & CSS Styling
@@ -30,7 +30,7 @@ st.markdown("""
     .header-img {
         width: 100%;
         height: 700px;
-        background: url('https://th.bing.com/th/id/OIP.xYrQ8Rd-tCPzzdvZOfNNoAHaHa?w=500&h=500&rs=1&pid=ImgDetMain') no-repeat center center;
+        background: url('https://example.com/image.jpg') no-repeat center center;
         background-size: cover;
         animation: fadeIn 2s ease-in-out;
     }
@@ -79,6 +79,7 @@ with st.sidebar:
 patient_name = ""
 patient_age = 0
 patient_gender = "Male"
+detection_results = None
 
 # Title and Upload Section
 st.markdown("""
@@ -108,6 +109,7 @@ if uploaded_file:
         with st.spinner("Analyzing with AI model..."):
             try:
                 result = CLIENT.infer(temp_path, model_id="brain-tumor-detection-lovmz/5")
+                detection_results = result
             except Exception as e:
                 st.error(f"❌ Inference failed: {e}")
                 os.remove(temp_path)
@@ -117,14 +119,14 @@ if uploaded_file:
 
             # Show Inference Results
             st.markdown("### 📝 Inference Results")
-            st.json(result)
+            st.json(detection_results)
 
             prediction_found = False
             draw = ImageDraw.Draw(image)
 
-            if result.get("predictions"):
+            if detection_results.get("predictions"):
                 prediction_found = True
-                for pred in result["predictions"]:
+                for pred in detection_results["predictions"]:
                     x, y = pred["x"], pred["y"]
                     w, h = pred["width"], pred["height"]
                     conf = pred.get("confidence", 0)
@@ -181,12 +183,24 @@ if uploaded_file:
                     c.drawString(50, height - 140, f"Gender: {patient_gender}")
                     c.drawString(50, height - 160, f"Image Name: {uploaded_file.name}")
 
-                    c.drawString(50, height - 190, "🧠 Prediction Summary:")
-                    y_cursor = height - 210
-                    for i, pred in enumerate(result["predictions"]):
-                        conf = pred.get("confidence", 0)
-                        c.drawString(60, y_cursor, f"• Tumor {i+1}: Confidence {conf:.2f}")
-                        y_cursor -= 20
+                    # Table Header
+                    c.setFont("Helvetica-Bold", 10)
+                    c.drawString(50, height - 200, "Predictions:")
+                    c.setFont("Helvetica", 8)
+                    table_header = ["Tumor No.", "Confidence", "X-Coordinate", "Y-Coordinate", "Width", "Height"]
+                    y_position = height - 220
+                    for col, header in enumerate(table_header):
+                        c.drawString(50 + col * 100, y_position, header)
+
+                    y_position -= 20
+                    for idx, pred in enumerate(detection_results["predictions"]):
+                        c.drawString(50, y_position, str(idx + 1))
+                        c.drawString(150, y_position, f"{pred.get('confidence', 0):.2f}")
+                        c.drawString(250, y_position, str(pred.get('x', '')))
+                        c.drawString(350, y_position, str(pred.get('y', '')))
+                        c.drawString(450, y_position, str(pred.get('width', '')))
+                        c.drawString(550, y_position, str(pred.get('height', '')))
+                        y_position -= 20
 
                     c.drawImage(image_path, 100, 100, width=400, preserveAspectRatio=True, mask='auto')
                     c.showPage()
@@ -203,7 +217,7 @@ if uploaded_file:
                     mime="application/pdf"
                 )
 
-# --- Real-Time Chatbot Assistance ---
+# Real-Time Chatbot Assistance
 st.title("Real-Time Chatbot Assistance")
 user_input = st.text_input("Ask a question about your diagnosis:")
 
@@ -214,3 +228,21 @@ if user_input:
         max_tokens=150
     )
     st.write(response.choices[0].text.strip())
+
+# --- User Feedback Section ---
+st.title("📝 User Feedback")
+feedback = st.text_area("Please provide your feedback on the app or any suggestions for improvement.")
+if st.button("Submit Feedback"):
+    if feedback:
+        st.success("Thank you for your feedback! We value your input to improve the app.")
+        # You can also save the feedback into a database or a file for further analysis
+    else:
+        st.warning("Please enter your feedback before submitting.")
+
+# --- Contact Section ---
+st.title("📞 Contact Us")
+st.markdown("""
+    If you have any issues or inquiries, feel free to contact us:
+    - **Email**: [support@braintumordetector.com](mailto:support@braintumordetector.com)
+    - **WhatsApp**: [+91 7092309109](https://wa.me/7092309109)
+""")
