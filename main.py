@@ -3,7 +3,7 @@ from inference_sdk import InferenceHTTPClient
 from PIL import Image, ImageDraw
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
-import tempfile, os, io, requests
+import tempfile, os, io
 from datetime import datetime
 
 # App config
@@ -15,56 +15,6 @@ CLIENT = InferenceHTTPClient(
     api_key="AUriIUOQuEbHt8npqPyt"
 )
 
-# Custom HTML & CSS Styling
-st.markdown("""
-    <style>
-    body, h1, h2, h3, h4, h5, h6 {
-        font-family: 'Raleway', Arial, Helvetica, sans-serif;
-    }
-
-    .header-img {
-        width: 100%;
-        height: 700px;
-        background: url('https://th.bing.com/th/id/OIP.xYrQ8Rd-tCPzzdvZOfNNoAHaHa?w=500&h=500&rs=1&pid=ImgDetMain') no-repeat center center;
-        background-size: cover;
-        animation: fadeIn 2s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    .content-section {
-        padding: 20px;
-        text-align: center;
-    }
-
-    .button-style {
-        background-color: #e53935;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-size: 16px;
-        border: none;
-    }
-
-    .button-style:hover {
-        background-color: #d32f2f;
-        cursor: pointer;
-    }
-
-    .image-container {
-        text-align: center;
-        margin: 20px 0;
-    }
-    </style>
-    <div class="header-img">
-        <h1 style="text-align: center; padding-top: 250px; color: red; font-size: 48px;">Brain Tumor Detection</h1>
-        <p style="text-align: center; color: blue; font-size: 26px;">Detect tumor regions from MRI scans using AI</p>
-    </div>
-""", unsafe_allow_html=True)
-
 # Sidebar Instructions
 with st.sidebar:
     st.title("ℹ️ How to Use")
@@ -75,12 +25,9 @@ with st.sidebar:
     4. Download PDF Report.
     """)
 
-# Title and Upload Section
-st.markdown("""
-    <div class="content-section">
-        <p>Upload your MRI scan image for AI-based analysis.</p>
-    </div>
-""", unsafe_allow_html=True)
+# Upload Section
+st.title("🧠 Brain Tumor Detection")
+st.markdown("Upload your MRI scan image for AI-based analysis.")
 
 uploaded_file = st.file_uploader("📤 Upload Brain MRI Image", type=["jpg", "jpeg", "png"])
 
@@ -104,7 +51,6 @@ if uploaded_file:
 
             os.remove(temp_path)
 
-            # Show Inference Results
             st.markdown("### 📝 Inference Results")
             st.json(result)
 
@@ -141,16 +87,6 @@ if uploaded_file:
                     c = canvas.Canvas(buffer, pagesize=A4)
                     width, height = A4
 
-                    # Download the logo image
-                    logo_url = "https://static.vecteezy.com/system/resources/previews/011/863/863/non_2x/brain-connection-logo-design-digital-brain-logo-template-brainstorm-icon-logo-ideas-think-idea-concept-free-vector.jpg"
-                    response = requests.get(logo_url)
-                    logo_path = tempfile.NamedTemporaryFile(delete=False, suffix=".jpg")
-                    logo_path.write(response.content)
-                    logo_path.close()
-
-                    # Add Logo
-                    c.drawImage(logo_path.name, 30, height - 60, width=50, height=50)
-
                     c.setFont("Helvetica-Bold", 20)
                     c.drawCentredString(width / 2, height - 50, "Brain Tumor Detection Report")
 
@@ -170,7 +106,6 @@ if uploaded_file:
                     c.save()
                     buffer.seek(0)
 
-                    os.remove(logo_path.name)
                     return buffer
 
                 pdf_buffer = generate_pdf()
