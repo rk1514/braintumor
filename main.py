@@ -46,7 +46,7 @@ st.markdown("""
         font-size: 48px;
     }
     .text-below-image p {
-        color: red;
+        color: white;
         font-size: 26px;
     }
     </style>
