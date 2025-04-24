@@ -4,3 +4,6 @@ inference-sdk
 opencv-python-headless
 reportlab
 requests
+qrcode[pil]
+pandas
+openai
