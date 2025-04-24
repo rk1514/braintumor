@@ -105,8 +105,24 @@ if uploaded_file:
     medications = st.text_area("Medications currently taking")
     family_history = st.text_area("Family medical history")
 
+    # Data Privacy & Consent Notice
+    st.markdown("### 🔒 Data Privacy & Consent")
+    consent_given = st.checkbox("I consent to the use of my data (image and medical details) for diagnostic and research purposes.", value=False)
+
+    with st.expander("View Our Data Privacy Policy"):
+        st.markdown("""
+        - We do **not** store any personally identifiable data without your consent.
+        - Your uploaded MRI scans and details are used **only for AI analysis** during this session.
+        - We follow standard security protocols to ensure your data is protected.
+        - You can request deletion of any report generated.
+        """)
+
     # Button for starting detection
     if st.button("🔍 Detect Tumor", key="detect", help="Click to detect brain tumor in the MRI scan"):
+        if not consent_given:
+            st.warning("⚠️ Please provide consent before proceeding with the analysis.")
+            st.stop()
+
         with st.spinner("Analyzing with AI model..."):
             try:
                 result = CLIENT.infer(temp_path, model_id="brain-tumor-detection-lovmz/5")
