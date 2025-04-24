@@ -18,7 +18,6 @@ st.set_page_config(page_title="Brain Tumor Detection", page_icon="🧠", layout=
 # Initialize Translator object
 translator = Translator()
 
-# Define translations for various sections of the app
 translations = {
     "en": {
         "title": "Brain Tumor Detection",
@@ -52,12 +51,52 @@ translations = {
         "thank_you_feedback": "¡Gracias por su retroalimentación! Calificación: {rating} estrellas",
         "contact_us": "📞 Contáctenos",
     },
-    # Add more languages as needed
+    "ne": {  # Nepali Translation
+        "title": "मस्तिष्क ट्यूमर पत्ता लगाउने",
+        "instructions": """
+        १. मस्तिष्क MRI इमेज (JPG/PNG) अपलोड गर्नुहोस्।
+        २. **ट्यूमर पत्ता लगाउनुहोस्** क्लिक गर्नुहोस्।
+        ३. एआई भविष्यवाणीहरू हेर्नुहोस्।
+        ४. PDF रिपोर्ट डाउनलोड गर्नुहोस्।
+        """,
+        "upload_text": "एआई आधारित विश्लेषणको लागि तपाईंको MRI स्क्यान इमेज अपलोड गर्नुहोस्।",
+        "patient_info": "रोगीको जानकारी",
+        "medical_history": "चिकित्सा इतिहास",
+        "data_privacy": "डेटा गोपनीयता र सहमति",
+        "detect_tumor": "🔍 ट्यूमर पत्ता लगाउनुहोस्",
+        "thank_you_feedback": "तपाईंको प्रतिक्रिया को लागि धन्यवाद! रेटिंग: {rating} ताराहरू",
+        "contact_us": "📞 हामीसँग सम्पर्क गर्नुहोस्",
+    },
 }
 
 # Language Selector
-language = st.selectbox("Choose your language", options=["English", "Español"], index=0)
-lang_key = "en" if language == "English" else "es"
+language = st.selectbox("Choose your language", options=["English", "Español", "नेपाली"], index=0)
+lang_key = "en" if language == "English" else "es" if language == "Español" else "ne"
+
+# Title and Instructions Section with Dynamic Text
+st.markdown(f"""
+    <div class="content-section">
+        <p>{translations[lang_key]["upload_text"]}</p>
+    </div>
+""", unsafe_allow_html=True)
+
+# Sidebar Instructions
+with st.sidebar:
+    st.title("ℹ️ {translations[lang_key]['instructions']}")
+    st.markdown(f"""
+    1. {translations[lang_key]['instructions']}
+    """)
+  
+# App Title with Translation
+st.title(f"{translations[lang_key]['title']}")
+
+# Add Patient Details, Data Privacy & Consent, and Progress Steps Sections using dynamic text from translations
+
+# Example: Patient Information Section
+st.markdown(f"### {translations[lang_key]['patient_info']}")
+patient_name = st.text_input(f"{translations[lang_key]['patient_info']} Name")
+patient_age = st.number_input(f"{translations[lang_key]['patient_info']} Age", min_value=0)
+patient_gender = st.selectbox(f"{translations[lang_key]['patient_info']} Gender", ["Male", "Female", "Other"])
 
 # Roboflow Client
 CLIENT = InferenceHTTPClient(
