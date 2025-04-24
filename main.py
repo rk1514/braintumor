@@ -26,8 +26,9 @@ st.markdown("""
             font-family: 'Raleway', Arial, Helvetica, sans-serif;
         }
         .header-img {
-            width: 100%;
-            height: 700px; /* Consider adjusting height for different screen sizes */
+            width: 300px; /* Set a fixed width */
+            height: 300px; /* Set a fixed height to make it a circle */
+            border-radius: 50%; /* This makes it a circle */
             background: url('https://th.bing.com/th/id/OIP._8eGDGy8q02rSWkuvrrhhAHaEw?rs=1&pid=ImgDetMain') no-repeat center center;
             background-size: cover;
             animation: fadeIn 2s ease-in-out;
@@ -42,20 +43,20 @@ st.markdown("""
         }
         .text-below-image h1 {
             color: red;
-            font-size: 48px; /* Consider making font size responsive */
+            font-size: 48px;
         }
         .text-below-image p {
             color: white;
-            font-size: 26px; /* Consider making font size responsive */
+            font-size: 26px;
         }
-        .report-section { /* Added style for report section */
+        .report-section {
             border: 1px solid #ddd;
             padding: 10px;
             margin-bottom: 20px;
             border-radius: 5px;
-            background-color: #f9f9f9; /* Light grey background */
+            background-color: #f9f9f9;
         }
-        .feedback-section, .contact-section { /* Added style for feedback and contact sections */
+        .feedback-section, .contact-section {
             border: 1px solid #ddd;
             padding: 10px;
             margin-top: 20px;
@@ -69,6 +70,7 @@ st.markdown("""
         <p>Detect tumor regions from MRI scans using AI</p>
     </div>
 """, unsafe_allow_html=True)
+
 
 # Sidebar Instructions - Use st.expander for better organization
 with st.sidebar:
