@@ -4,16 +4,11 @@ from PIL import Image, ImageDraw
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 import tempfile, os, io
-import openai
-import pandas as pd
-from datetime import datetime
 import qrcode
+from datetime import datetime
 
 # App config
 st.set_page_config(page_title="Brain Tumor Detection", page_icon="🧠", layout="centered")
-
-# OpenAI API Key (for Chatbot Assistance)
-openai.api_key = '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'
 
 # Roboflow Client
 CLIENT = InferenceHTTPClient(
@@ -198,18 +193,6 @@ if uploaded_file:
                     mime="application/pdf"
                 )
 
-# --- Real-Time Chatbot Assistance ---
-st.title("Real-Time Chatbot Assistance")
-user_input = st.text_input("Ask a question about your diagnosis:")
-
-if user_input:
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=user_input,
-        max_tokens=150
-    )
-    st.write(f"Chatbot: {response.choices[0].text.strip()}")
-
 # --- User Feedback Section ---
 st.title("We Value Your Feedback")
 rating = st.radio("How would you rate your experience with the AI model?", options=[1, 2, 3, 4, 5])
@@ -228,4 +211,3 @@ st.markdown("""
     - **Email**: [support@braintumordetector.com](mailto:support@braintumordetector.com)
     - **WhatsApp**: [+91 7092309109](https://wa.me/7092309109)
 """)
-
