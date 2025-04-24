@@ -3,7 +3,7 @@ from inference_sdk import InferenceHTTPClient
 from PIL import Image, ImageDraw
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
-import tempfile, os, io
+import tempfile, os, io, requests
 from datetime import datetime
 
 # App config
@@ -141,8 +141,15 @@ if uploaded_file:
                     c = canvas.Canvas(buffer, pagesize=A4)
                     width, height = A4
 
-                    # Add Logo to the PDF
-                    c.drawImage("https://static.vecteezy.com/system/resources/previews/011/863/863/non_2x/brain-connection-logo-design-digital-brain-logo-template-brainstorm-icon-logo-ideas-think-idea-concept-free-vector.jpg", 30, height - 60, width=50, height=50)  # Change path to your logo
+                    # Download the logo image
+                    logo_url = "https://static.vecteezy.com/system/resources/previews/011/863/863/non_2x/brain-connection-logo-design-digital-brain-logo-template-brainstorm-icon-logo-ideas-think-idea-concept-free-vector.jpg"
+                    response = requests.get(logo_url)
+                    logo_path = tempfile.NamedTemporaryFile(delete=False, suffix=".jpg")
+                    logo_path.write(response.content)
+                    logo_path.close()
+
+                    # Add Logo
+                    c.drawImage(logo_path.name, 30, height - 60, width=50, height=50)
 
                     c.setFont("Helvetica-Bold", 20)
                     c.drawCentredString(width / 2, height - 50, "Brain Tumor Detection Report")
@@ -162,6 +169,8 @@ if uploaded_file:
                     c.showPage()
                     c.save()
                     buffer.seek(0)
+
+                    os.remove(logo_path.name)
                     return buffer
 
                 pdf_buffer = generate_pdf()
@@ -171,4 +180,4 @@ if uploaded_file:
                     data=pdf_buffer,
                     file_name="Brain_Tumor_Report.pdf",
                     mime="application/pdf"
-                ) 
+                )
