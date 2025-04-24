@@ -3,19 +3,12 @@ from inference_sdk import InferenceHTTPClient
 from PIL import Image, ImageDraw
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
-from reportlab.lib import colors
-from reportlab.platypus import Table, TableStyle
 import tempfile, os, io
-import openai
-import pandas as pd
-from datetime import datetime
 import qrcode
+from datetime import datetime
 
 # App config
 st.set_page_config(page_title="Brain Tumor Detection", page_icon="🧠", layout="centered")
-
-# OpenAI API Key (for Chatbot Assistance)
-openai.api_key = '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'
 
 # Roboflow Client
 CLIENT = InferenceHTTPClient(
@@ -171,51 +164,21 @@ if uploaded_file:
                     c.setFont("Helvetica-Bold", 20)
                     c.drawCentredString(width / 2, height - 50, "Brain Tumor Detection Report")
 
-                    # Patient Information Table
-                    data = [
-                        ["Patient Information", "", ""],
-                        ["Name", patient_name, ""],
-                        ["Age", str(patient_age), ""],
-                        ["Gender", patient_gender, ""],
-                        ["Image Name", uploaded_file.name, ""],
-                    ]
+                    c.setFont("Helvetica", 12)
+                    c.drawString(50, height - 80, f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                    c.drawString(50, height - 100, f"Patient Name: {patient_name}")
+                    c.drawString(50, height - 120, f"Age: {patient_age}")
+                    c.drawString(50, height - 140, f"Gender: {patient_gender}")
+                    c.drawString(50, height - 160, f"Image Name: {uploaded_file.name}")
 
-                    # Prediction Results Table
-                    prediction_data = [
-                        ["Prediction #", "Confidence", "Details"]
-                    ]
+                    c.drawString(50, height - 190, "🧠 Prediction Summary:")
+                    y_cursor = height - 210
+                    for i, pred in enumerate(result["predictions"]):
+                        conf = pred.get("confidence", 0)
+                        c.drawString(60, y_cursor, f"• Tumor {i+1}: Confidence {conf:.2f}")
+                        y_cursor -= 20
 
-                    if result.get("predictions"):
-                        for i, pred in enumerate(result["predictions"]):
-                            conf = pred.get("confidence", 0)
-                            prediction_data.append([f"Tumor {i+1}", f"{conf:.2f}", f"Coordinates: ({pred['x']}, {pred['y']}), Size: ({pred['width']}, {pred['height']})"])
-
-                    # Create a table with patient and prediction data
-                    patient_table = Table(data, colWidths=[150, 200, 200], rowHeights=30)
-                    patient_table.setStyle(TableStyle([
-                        ('TEXTCOLOR', (0, 0), (2, 0), colors.white),
-                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                        ('GRID', (0, 0), (-1, -1), 1, colors.black),
-                    ]))
-
-                    prediction_table = Table(prediction_data, colWidths=[100, 100, 300], rowHeights=30)
-                    prediction_table.setStyle(TableStyle([
-                        ('TEXTCOLOR', (0, 0), (2, 0), colors.white),
-                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                        ('GRID', (0, 0), (-1, -1), 1, colors.black),
-                    ]))
-
-                    # Draw the tables on the PDF
-                    patient_table.wrapOn(c, width, height)
-                    patient_table.drawOn(c, 50, height - 200)
-                    prediction_table.wrapOn(c, width, height)
-                    prediction_table.drawOn(c, 50, height - 400)
-
-                    # Add the image at the end of the PDF
-                    c.drawImage(image_path, 100, 150, width=400, preserveAspectRatio=True, mask='auto')
-
+                    c.drawImage(image_path, 100, 100, width=400, preserveAspectRatio=True, mask='auto')
                     c.showPage()
                     c.save()
                     buffer.seek(0)
