@@ -79,24 +79,10 @@ st.markdown(f"""
         <p>{translations[lang_key]["upload_text"]}</p>
     </div>
 """, unsafe_allow_html=True)
-
-# Sidebar Instructions
-with st.sidebar:
-    st.title("ℹ️ {translations[lang_key]['instructions']}")
-    st.markdown(f"""
-    1. {translations[lang_key]['instructions']}
-    """)
   
 # App Title with Translation
 st.title(f"{translations[lang_key]['title']}")
 
-# Add Patient Details, Data Privacy & Consent, and Progress Steps Sections using dynamic text from translations
-
-# Example: Patient Information Section
-st.markdown(f"### {translations[lang_key]['patient_info']}")
-patient_name = st.text_input(f"{translations[lang_key]['patient_info']} Name")
-patient_age = st.number_input(f"{translations[lang_key]['patient_info']} Age", min_value=0)
-patient_gender = st.selectbox(f"{translations[lang_key]['patient_info']} Gender", ["Male", "Female", "Other"])
 
 # Roboflow Client
 CLIENT = InferenceHTTPClient(
