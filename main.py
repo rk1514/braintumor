@@ -37,32 +37,26 @@ st.markdown("""
         from { opacity: 0; }
         to { opacity: 1; }
     }
-    .content-section {
+    .text-below-image {
+        text-align: center;
         padding: 20px;
-        text-align: center;
     }
-    .button-style {
-        background-color: #e53935;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-size: 16px;
-        border: none;
+    .text-below-image h1 {
+        color: red;
+        font-size: 48px;
     }
-    .button-style:hover {
-        background-color: #d32f2f;
-        cursor: pointer;
-    }
-    .image-container {
-        text-align: center;
-        margin: 20px 0;
+    .text-below-image p {
+        color: red;
+        font-size: 26px;
     }
     </style>
-    <div class="header-img">
-        <h1 style="text-align: center; padding-top: 250px; color: red; font-size: 48px;">Brain Tumor Detection</h1>
-        <p style="text-align: center; color: red; font-size: 26px;">Detect tumor regions from MRI scans using AI</p>
+    <div class="header-img"></div>
+    <div class="text-below-image">
+        <h1>Brain Tumor Detection</h1>
+        <p>Detect tumor regions from MRI scans using AI</p>
     </div>
 """, unsafe_allow_html=True)
+
 
 # Sidebar Instructions
 with st.sidebar:
