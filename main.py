@@ -24,12 +24,15 @@ st.markdown("""
     <style>
         body, h1, h2, h3, h4, h5, h6 {
             font-family: 'Raleway', Arial, Helvetica, sans-serif;
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
         }
         .header-container {
             display: flex;
             justify-content: center; /* Centers the image horizontally */
             align-items: center; /* Centers the image vertically */
-            height: 700px; /* Adjust as needed */
+            height: 100vh; /* Full viewport height */
+            margin: 0; /* Remove any margin around the container */
         }
         .header-img {
             width: 300px; /* Set a fixed width */
@@ -78,6 +81,7 @@ st.markdown("""
         <p>Detect tumor regions from MRI scans using AI</p>
     </div>
 """, unsafe_allow_html=True)
+
 
 
 # Sidebar Instructions - Use st.expander for better organization
