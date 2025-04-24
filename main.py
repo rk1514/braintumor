@@ -60,7 +60,7 @@ st.markdown("""
     </style>
     <div class="header-img">
         <h1 style="text-align: center; padding-top: 250px; color: red; font-size: 48px;">Brain Tumor Detection</h1>
-        <p style="text-align: center; color: blue; font-size: 26px;">Detect tumor regions from MRI scans using AI</p>
+        <p style="text-align: center; color: red; font-size: 26px;">Detect tumor regions from MRI scans using AI</p>
     </div>
 """, unsafe_allow_html=True)
 
