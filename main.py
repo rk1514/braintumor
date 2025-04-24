@@ -4,10 +4,16 @@ from PIL import Image, ImageDraw
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 import tempfile, os, io
+import openai
+import pandas as pd
 from datetime import datetime
+import qrcode
 
 # App config
 st.set_page_config(page_title="Brain Tumor Detection", page_icon="🧠", layout="centered")
+
+# OpenAI API Key (for Chatbot Assistance)
+'openai.api_key = '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'
 
 # Roboflow Client
 CLIENT = InferenceHTTPClient(
@@ -21,7 +27,6 @@ st.markdown("""
     body, h1, h2, h3, h4, h5, h6 {
         font-family: 'Raleway', Arial, Helvetica, sans-serif;
     }
-
     .header-img {
         width: 100%;
         height: 700px;
@@ -29,17 +34,14 @@ st.markdown("""
         background-size: cover;
         animation: fadeIn 2s ease-in-out;
     }
-
     @keyframes fadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
     }
-
     .content-section {
         padding: 20px;
         text-align: center;
     }
-
     .button-style {
         background-color: #e53935;
         color: white;
@@ -48,12 +50,10 @@ st.markdown("""
         font-size: 16px;
         border: none;
     }
-
     .button-style:hover {
         background-color: #d32f2f;
         cursor: pointer;
     }
-
     .image-container {
         text-align: center;
         margin: 20px 0;
@@ -91,6 +91,12 @@ if uploaded_file:
     with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as temp_file:
         image.save(temp_file.name, format="JPEG")
         temp_path = temp_file.name
+
+    # Add patient details inputs
+    st.markdown("### 🩺 Patient Information")
+    patient_name = st.text_input("Patient Name")
+    patient_age = st.number_input("Age", min_value=0)
+    patient_gender = st.selectbox("Gender", ["Male", "Female", "Other"])
 
     # Button for starting detection
     if st.button("🔍 Detect Tumor", key="detect", help="Click to detect brain tumor in the MRI scan"):
@@ -130,7 +136,26 @@ if uploaded_file:
                 st.image(image, caption="✅ No Tumor Detected", use_column_width=True)
                 st.success("🎉 No tumor regions detected in the image.")
 
-            # PDF Generation
+            # Personalized Health Insights
+            st.markdown("### Personalized Health Insights")
+            st.write("Based on your MRI scan, we recommend that you consult with your doctor for a follow-up MRI scan and discuss treatment options.")
+
+            # Patient Education Section
+            st.markdown("### Patient Education Section")
+            st.write("Brain tumors can be classified into benign and malignant types. Treatment depends on the tumor type, location, and size. Surgery, radiation, and chemotherapy are common treatment options.")
+
+            # Interactive QR Code for patient details
+            qr_data = f"Patient Name: {patient_name}\nAge: {patient_age}\nGender: {patient_gender}\nTumor Type: {'Benign' if prediction_found else 'None'}"
+            qr = qrcode.make(qr_data)
+            qr_path = "/tmp/qr_code.png"
+            qr.save(qr_path)
+            st.image(qr_path, caption="Scan for Patient Details (QR Code)")
+
+            # Interactive Story Style (Patient's Journey)
+            st.markdown("### Interactive Story")
+            st.write("Here's your health journey: Step 1 - MRI Scan, Step 2 - Diagnosis, Step 3 - Treatment Recommendations.")
+
+            # PDF Generation with Patient Details and Results in Table Form
             if prediction_found:
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as temp_img_file:
                     image.save(temp_img_file.name, format="JPEG")
@@ -146,10 +171,13 @@ if uploaded_file:
 
                     c.setFont("Helvetica", 12)
                     c.drawString(50, height - 80, f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-                    c.drawString(50, height - 100, f"Image Name: {uploaded_file.name}")
+                    c.drawString(50, height - 100, f"Patient Name: {patient_name}")
+                    c.drawString(50, height - 120, f"Age: {patient_age}")
+                    c.drawString(50, height - 140, f"Gender: {patient_gender}")
+                    c.drawString(50, height - 160, f"Image Name: {uploaded_file.name}")
 
-                    c.drawString(50, height - 130, "🧠 Prediction Summary:")
-                    y_cursor = height - 150
+                    c.drawString(50, height - 190, "🧠 Prediction Summary:")
+                    y_cursor = height - 210
                     for i, pred in enumerate(result["predictions"]):
                         conf = pred.get("confidence", 0)
                         c.drawString(60, y_cursor, f"• Tumor {i+1}: Confidence {conf:.2f}")
@@ -168,4 +196,66 @@ if uploaded_file:
                     data=pdf_buffer,
                     file_name="Brain_Tumor_Report.pdf",
                     mime="application/pdf"
-                ) 
+                )
+
+# --- Real-Time Chatbot Assistance ---
+st.title("Real-Time Chatbot Assistance")
+user_input = st.text_input("Ask a question about your diagnosis:")
+
+if user_input:
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=user_input,
+        max_tokens=150
+    )
+    st.write(f"Chatbot: {response.choices[0].text.strip()}")
+
+# --- User Feedback Section ---
+st.title("We Value Your Feedback")
+rating = st.radio("How would you rate your experience with the AI model?", options=[1, 2, 3, 4, 5])
+feedback = st.text_area("Any comments or suggestions?")
+
+if st.button("Submit Feedback"):
+    st.write(f"Thank you for your feedback! Rating: {rating} stars")
+    if feedback:
+        st.write(f"Your comments: {feedback}")
+
+# --- Export Data (CSV/Excel) ---
+# Prepare Data (Example Data)
+data = {
+    "Patient Name": [patient_name],
+    "Age": [patient_age],
+    "Gender": [patient_gender],
+    "Tumor Type": ["Benign" if prediction_found else "None"],
+    "Confidence": [result["predictions"][0]["confidence"] if prediction_found else 0],
+    "Treatment Recommendations": ["Surgery, Follow-up scans every 6 months" if prediction_found else "No further action"]
+}
+
+# Convert to DataFrame
+df = pd.DataFrame(data)
+
+# Convert DataFrame to CSV
+csv_buffer = io.StringIO()
+df.to_csv(csv_buffer, index=False)
+
+# Provide Download Button for CSV
+st.download_button(
+    label="Download Results as CSV",
+    data=csv_buffer.getvalue(),
+    file_name="patient_diagnosis.csv",
+    mime="text/csv"
+)
+
+# Convert DataFrame to Excel
+excel_buffer = io.BytesIO()
+with pd.ExcelWriter(excel_buffer, engine="xlsxwriter") as writer:
+    df.to_excel(writer, index=False, sheet_name="Diagnosis Report")
+    writer.save()
+
+# Provide Download Button for Excel
+st.download_button(
+    label="Download Results as Excel",
+    data=excel_buffer.getvalue(),
+    file_name="patient_diagnosis.xlsx",
+    mime="application/vnd.ms-excel"
+)
