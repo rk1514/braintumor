@@ -8,6 +8,8 @@ import openai
 import pandas as pd
 from datetime import datetime
 import qrcode
+import time  
+
 
 # App config
 st.set_page_config(page_title="Brain Tumor Detection", page_icon="🧠", layout="centered")
