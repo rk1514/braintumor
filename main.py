@@ -4,11 +4,16 @@ from PIL import Image, ImageDraw
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 import tempfile, os, io
-import qrcode
+import openai
+import pandas as pd
 from datetime import datetime
+import qrcode
 
 # App config
 st.set_page_config(page_title="Brain Tumor Detection", page_icon="🧠", layout="centered")
+
+# OpenAI API Key (for Chatbot Assistance)
+openai.api_key = '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'
 
 # Roboflow Client
 CLIENT = InferenceHTTPClient(
@@ -77,7 +82,7 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-uploaded_file = st.file_uploader("📤 Upload Brain MRI Image", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("📄 Upload Brain MRI Image", type=["jpg", "jpeg", "png"])
 
 if uploaded_file:
     image = Image.open(uploaded_file).convert("RGB")
@@ -125,7 +130,7 @@ if uploaded_file:
                     draw.rectangle([(left, top), (right, bottom)], outline="red", width=3)
                     draw.text((left, top - 15), f"Tumor: {conf:.2f}", fill="red")
 
-                st.image(image, caption="🟥 Detected Tumor Region(s)", use_column_width=True)
+                st.image(image, caption="🔵 Detected Tumor Region(s)", use_column_width=True)
                 st.success("🔬 Tumor detected. Download report below.")
             else:
                 st.image(image, caption="✅ No Tumor Detected", use_column_width=True)
@@ -150,7 +155,7 @@ if uploaded_file:
             st.markdown("### Interactive Story")
             st.write("Here's your health journey: Step 1 - MRI Scan, Step 2 - Diagnosis, Step 3 - Treatment Recommendations.")
 
-            # PDF Generation with Patient Details and Results in Table Form
+            # PDF Generation with Patient Details and Results in Text Form
             if prediction_found:
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as temp_img_file:
                     image.save(temp_img_file.name, format="JPEG")
@@ -202,7 +207,6 @@ if st.button("Submit Feedback"):
     st.write(f"Thank you for your feedback! Rating: {rating} stars")
     if feedback:
         st.write(f"Your comments: {feedback}")
-
 
 # --- Contact Section ---
 st.title("📞 Contact Us")
