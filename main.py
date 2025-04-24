@@ -220,45 +220,6 @@ if st.button("Submit Feedback"):
     if feedback:
         st.write(f"Your comments: {feedback}")
 
-# --- Export Data (CSV/Excel) ---
-# Prepare Data (Example Data)
-data = {
-    "Patient Name": [patient_name],
-    "Age": [patient_age],
-    "Gender": [patient_gender],
-    "Tumor Type": ["Benign" if prediction_found else "None"],
-    "Confidence": [result["predictions"][0]["confidence"] if prediction_found else 0],
-    "Treatment Recommendations": ["Surgery, Follow-up scans every 6 months" if prediction_found else "No further action"]
-}
-
-# Convert to DataFrame
-df = pd.DataFrame(data)
-
-# Convert DataFrame to CSV
-csv_buffer = io.StringIO()
-df.to_csv(csv_buffer, index=False)
-
-# Provide Download Button for CSV
-st.download_button(
-    label="Download Results as CSV",
-    data=csv_buffer.getvalue(),
-    file_name="patient_diagnosis.csv",
-    mime="text/csv"
-)
-
-# Convert DataFrame to Excel
-excel_buffer = io.BytesIO()
-with pd.ExcelWriter(excel_buffer, engine="xlsxwriter") as writer:
-    df.to_excel(writer, index=False, sheet_name="Diagnosis Report")
-    writer.save()
-
-# Provide Download Button for Excel
-st.download_button(
-    label="Download Results as Excel",
-    data=excel_buffer.getvalue(),
-    file_name="patient_diagnosis.xlsx",
-    mime="application/vnd.ms-excel"
-)
 
 # --- Contact Section ---
 st.title("📞 Contact Us")
