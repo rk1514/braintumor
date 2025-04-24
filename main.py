@@ -197,7 +197,9 @@ if uploaded_file:
                         c.drawString(60, y_cursor, f"• Tumor {i+1}: Confidence {conf:.2f}")
                         y_cursor -= 20
 
-                    c.drawImage(image_path, 100, 100, width=400, preserveAspectRatio=True, mask='auto')
+                    img_width = 300
+                    img_height = 300
+                    c.drawImage(image_path, width - img_width - 50, 100, width=img_width, height=img_height, preserveAspectRatio=True, mask='auto')
                     c.showPage()
                     c.save()
                     buffer.seek(0)
