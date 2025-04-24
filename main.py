@@ -105,7 +105,6 @@ if uploaded_file:
                     c.showPage()
                     c.save()
                     buffer.seek(0)
-
                     return buffer
 
                 pdf_buffer = generate_pdf()
