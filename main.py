@@ -8,7 +8,8 @@ import openai
 import pandas as pd
 from datetime import datetime
 import qrcode
-import time  
+from googletrans import Translator
+import time
 
 
 # App config
