@@ -2,3 +2,4 @@ streamlit
 pillow
 inference-sdk
 opencv-python-headless
+reportlab
