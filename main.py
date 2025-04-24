@@ -216,106 +216,106 @@ with st.container():
                             image_path = temp_img_file.name
 
                         def generate_pdf():
-    buffer = io.BytesIO()
-    c = canvas.Canvas(buffer, pagesize=A4)
-    styles = getSampleStyleSheet()
-    title_style = styles["h1"]
-    normal_style = styles["normal"]
-    bold_style = styles["b"]
+                            buffer = io.BytesIO()
+                            c = canvas.Canvas(buffer, pagesize=A4)
+                            styles = getSampleStyleSheet()
+                            title_style = styles["h1"]
+                            normal_style = styles["normal"]
+                            bold_style = styles["b"]
 
-    width, height = A4
-    margin = inch
+                            width, height = A4
+                            margin = inch
 
-    # --- Report Header ---
-    c.setFont("Helvetica-Bold", 20)
-    c.drawCentredString(width / 2, height - margin, "Brain Tumor Detection Report")
-    c.line(margin, height - margin - 0.2 * inch, width - margin, height - margin - 0.2 * inch)
-    c.setFont("Helvetica", 10)
-    c.drawRightString(width - margin, height - margin - 0.4 * inch, f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                            # --- Report Header ---
+                            c.setFont("Helvetica-Bold", 20)
+                            c.drawCentredString(width / 2, height - margin, "Brain Tumor Detection Report")
+                            c.line(margin, height - margin - 0.2 * inch, width - margin, height - margin - 0.2 * inch)
+                            c.setFont("Helvetica", 10)
+                            c.drawRightString(width - margin, height - margin - 0.4 * inch, f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
-    y_position = height - margin - 0.7 * inch
+                            y_position = height - margin - 0.7 * inch
 
-    # --- Patient Information Section ---
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(margin, y_position, "Patient Information")
-    y_position -= 0.2 * inch
-    c.setFont("Helvetica", 12)
-    c.drawString(margin, y_position, f"Name: {patient_name}")
-    y_position -= 0.2 * inch
-    c.drawString(margin, y_position, f"Age: {patient_age}")
-    y_position -= 0.2 * inch
-    c.drawString(margin, y_position, f"Gender: {patient_gender}")
-    y_position -= 0.2 * inch
-    c.drawString(margin, y_position, f"Image Name: {uploaded_file.name}")
-    y_position -= 0.3 * inch
+                            # --- Patient Information Section ---
+                            c.setFont("Helvetica-Bold", 14)
+                            c.drawString(margin, y_position, "Patient Information")
+                            y_position -= 0.2 * inch
+                            c.setFont("Helvetica", 12)
+                            c.drawString(margin, y_position, f"Name: {patient_name}")
+                            y_position -= 0.2 * inch
+                            c.drawString(margin, y_position, f"Age: {patient_age}")
+                            y_position -= 0.2 * inch
+                            c.drawString(margin, y_position, f"Gender: {patient_gender}")
+                            y_position -= 0.2 * inch
+                            c.drawString(margin, y_position, f"Image Name: {uploaded_file.name}")
+                            y_position -= 0.3 * inch
 
-    # --- Medical History Section ---
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(margin, y_position, "Medical History")
-    y_position -= 0.2 * inch
-    c.setFont("Helvetica", 12)
-    c.drawString(margin, y_position, f"Previous illnesses/conditions: {previous_illnesses if previous_illnesses else 'N/A'}")
-    y_position -= 0.2 * inch
-    c.drawString(margin, y_position, f"Allergies: {allergies if allergies else 'N/A'}")
-    y_position -= 0.2 * inch
-    c.drawString(margin, y_position, f"Medications: {medications if medications else 'N/A'}")
-    y_position -= 0.2 * inch
-    c.drawString(margin, y_position, f"Family History: {family_history if family_history else 'N/A'}")
-    y_position -= 0.3 * inch
+                            # --- Medical History Section ---
+                            c.setFont("Helvetica-Bold", 14)
+                            c.drawString(margin, y_position, "Medical History")
+                            y_position -= 0.2 * inch
+                            c.setFont("Helvetica", 12)
+                            c.drawString(margin, y_position, f"Previous illnesses/conditions: {previous_illnesses if previous_illnesses else 'N/A'}")
+                            y_position -= 0.2 * inch
+                            c.drawString(margin, y_position, f"Allergies: {allergies if allergies else 'N/A'}")
+                            y_position -= 0.2 * inch
+                            c.drawString(margin, y_position, f"Medications: {medications if medications else 'N/A'}")
+                            y_position -= 0.2 * inch
+                            c.drawString(margin, y_position, f"Family History: {family_history if family_history else 'N/A'}")
+                            y_position -= 0.3 * inch
 
-    # --- AI Prediction Summary Section ---
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(margin, y_position, "AI Prediction Summary")
-    y_position -= 0.2 * inch
-    c.setFont("Helvetica", 12)
-    if result.get("predictions"):
-        data = [["#", "Confidence"]]
-        for i, pred in enumerate(result["predictions"]):
-            conf = pred.get("confidence", 0)
-            data.append([f"Tumor {i+1}", f"{conf:.2f}"])
+                            # --- AI Prediction Summary Section ---
+                            c.setFont("Helvetica-Bold", 14)
+                            c.drawString(margin, y_position, "AI Prediction Summary")
+                            y_position -= 0.2 * inch
+                            c.setFont("Helvetica", 12)
+                            if result.get("predictions"):
+                                data = [["#", "Confidence"]]
+                                for i, pred in enumerate(result["predictions"]):
+                                    conf = pred.get("confidence", 0)
+                                    data.append([f"Tumor {i+1}", f"{conf:.2f}"])
 
-        table = Table(data)
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black)
-        ]))
-        table.wrapOn(c, width - 2 * margin, height)
-        table_height = table.drawOn(c, margin, y_position - table.height)
-        y_position -= (table_height + 0.2 * inch)
-    else:
-        c.drawString(margin, y_position, "No tumor detected by the AI model.")
-        y_position -= 0.3 * inch
+                                table = Table(data)
+                                table.setStyle(TableStyle([
+                                    ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                                    ('GRID', (0, 0), (-1, -1), 1, colors.black)
+                                ]))
+                                table.wrapOn(c, width - 2 * margin, height)
+                                table_height = table.drawOn(c, margin, y_position - table.height)
+                                y_position -= (table_height + 0.2 * inch)
+                            else:
+                                c.drawString(margin, y_position, "No tumor detected by the AI model.")
+                                y_position -= 0.3 * inch
 
-    # --- Detected Image ---
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(margin, y_position, "Detected Tumor Region (if any)")
-    y_position -= 0.2 * inch
-    img_width = 4 * inch
-    img_height = 4 * inch
-    try:
-        c.drawImage(image_path, margin, y_position - img_height, width=img_width, height=img_height, preserveAspectRatio=True, mask='auto')
-        y_position -= (img_height + 0.3 * inch)
-    except Exception as e:
-        c.setFont("Helvetica-Oblique", 10)
-        c.drawString(margin, y_position, "No detection image available.")
-        y_position -= 0.3 * inch
+                            # --- Detected Image ---
+                            c.setFont("Helvetica-Bold", 14)
+                            c.drawString(margin, y_position, "Detected Tumor Region (if any)")
+                            y_position -= 0.2 * inch
+                            img_width = 4 * inch
+                            img_height = 4 * inch
+                            try:
+                                c.drawImage(image_path, margin, y_position - img_height, width=img_width, height=img_height, preserveAspectRatio=True, mask='auto')
+                                y_position -= (img_height + 0.3 * inch)
+                            except Exception as e:
+                                c.setFont("Helvetica-Oblique", 10)
+                                c.drawString(margin, y_position, "No detection image available.")
+                                y_position -= 0.3 * inch
 
-    # --- Disclaimer ---
-    c.setFont("Helvetica", 10)
-    c.setFillColorRGB(0.5, 0.5, 0.5)
-    disclaimer_text = "Disclaimer: This report is based on an AI analysis of the provided MRI scan and patient information. It should not be considered a definitive medical diagnosis. Consultation with a qualified medical professional is essential for accurate diagnosis and treatment recommendations."
-    disclaimer = Paragraph(disclaimer_text, normal_style)
-    disclaimer.wrapOn(c, width - 2 * margin, height)
-    disclaimer.drawOn(c, margin, margin + 0.5 * inch)
+                            # --- Disclaimer ---
+                            c.setFont("Helvetica", 10)
+                            c.setFillColorRGB(0.5, 0.5, 0.5)
+                            disclaimer_text = "Disclaimer: This report is based on an AI analysis of the provided MRI scan and patient information. It should not be considered a definitive medical diagnosis. Consultation with a qualified medical professional is essential for accurate diagnosis and treatment recommendations."
+                            disclaimer = Paragraph(disclaimer_text, normal_style)
+                            disclaimer.wrapOn(c, width - 2 * margin, height)
+                            disclaimer.drawOn(c, margin, margin + 0.5 * inch)
 
-    c.save()
-    buffer.seek(0)
-    return buffer
+                            c.save()
+                            buffer.seek(0)
+                            return buffer
 
 # --- User Feedback Section --- - Enclose in a styled div
 st.markdown("<div class='feedback-section'>", unsafe_allow_html=True) # Added a styled div
