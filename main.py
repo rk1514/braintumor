@@ -25,6 +25,12 @@ st.markdown("""
         body, h1, h2, h3, h4, h5, h6 {
             font-family: 'Raleway', Arial, Helvetica, sans-serif;
         }
+        .header-container {
+            display: flex;
+            justify-content: center; /* Centers the image horizontally */
+            align-items: center; /* Centers the image vertically */
+            height: 700px; /* Adjust as needed */
+        }
         .header-img {
             width: 300px; /* Set a fixed width */
             height: 300px; /* Set a fixed height to make it a circle */
@@ -64,7 +70,9 @@ st.markdown("""
             background-color: #f9f9f9;
         }
     </style>
-    <div class="header-img"></div>
+    <div class="header-container">
+        <div class="header-img"></div>
+    </div>
     <div class="text-below-image">
         <h1>Brain Tumor Detection</h1>
         <p>Detect tumor regions from MRI scans using AI</p>
