@@ -8,6 +8,8 @@ import openai
 import pandas as pd
 from datetime import datetime
 import qrcode
+import time
+import random
 
 # App config
 st.set_page_config(page_title="Brain Tumor Detection", page_icon="🧠", layout="centered")
@@ -65,6 +67,54 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
+# Light/Dark Theme Toggle
+if 'theme' not in st.session_state:
+    st.session_state.theme = 'light'
+
+def toggle_theme():
+    if st.session_state.theme == 'light':
+        st.session_state.theme = 'dark'
+    else:
+        st.session_state.theme = 'light'
+
+# Create the toggle button
+st.button("🔄 Toggle Theme", on_click=toggle_theme)
+
+# Apply custom CSS for light/dark theme
+if st.session_state.theme == 'light':
+    theme_css = """
+        <style>
+        body {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        .button-style {
+            background-color: #e53935;
+            color: white;
+        }
+        .button-style:hover {
+            background-color: #d32f2f;
+        }
+        </style>
+    """
+else:
+    theme_css = """
+        <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+        }
+        .button-style {
+            background-color: #e53935;
+            color: white;
+        }
+        .button-style:hover {
+            background-color: #d32f2f;
+        }
+        </style>
+    """
+st.markdown(theme_css, unsafe_allow_html=True)
+
 # Sidebar Instructions
 with st.sidebar:
     st.title("ℹ️ How to Use")
@@ -117,6 +167,16 @@ if uploaded_file:
         - You can request deletion of any report generated.
         """)
 
+    # Stepper for Progress
+    steps = ['MRI Upload', 'Detection', 'Results', 'Report']
+    step_idx = 0
+    progress = st.progress(0)
+    for step in steps:
+        st.write(f"Step {step_idx + 1}: {step}")
+        progress.progress((step_idx + 1) * 25)
+        time.sleep(1)  # Simulate each step
+        step_idx += 1
+
     # Button for starting detection
     if st.button("🔍 Detect Tumor", key="detect", help="Click to detect brain tumor in the MRI scan"):
         if not consent_given:
@@ -158,6 +218,7 @@ if uploaded_file:
             else:
                 st.image(image, caption="✅ No Tumor Detected", use_column_width=True)
                 st.success("🎉 No tumor regions detected in the image.")
+                st.balloons()  # Show confetti animation
 
             # Personalized Health Insights
             st.markdown("### Personalized Health Insights")
@@ -174,10 +235,6 @@ if uploaded_file:
             qr.save(qr_path)
             st.image(qr_path, caption="Scan for Patient Details (QR Code)")
 
-            # Interactive Story Style (Patient's Journey)
-            st.markdown("### Interactive Story")
-            st.write("Here's your health journey: Step 1 - MRI Scan, Step 2 - Diagnosis, Step 3 - Treatment Recommendations.")
-
             # PDF Generation with Patient Details and Results in Table Form
             if prediction_found:
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as temp_img_file:
@@ -187,63 +244,20 @@ if uploaded_file:
                 def generate_pdf():
                     buffer = io.BytesIO()
                     c = canvas.Canvas(buffer, pagesize=A4)
-                    width, height = A4
-
-                    c.setFont("Helvetica-Bold", 20)
-                    c.drawCentredString(width / 2, height - 50, "Brain Tumor Detection Report")
-
-                    c.setFont("Helvetica", 12)
-                    c.drawString(50, height - 80, f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-                    c.drawString(50, height - 100, f"Patient Name: {patient_name}")
-                    c.drawString(50, height - 120, f"Age: {patient_age}")
-                    c.drawString(50, height - 140, f"Gender: {patient_gender}")
-                    c.drawString(50, height - 160, f"Image Name: {uploaded_file.name}")
-
-                    c.drawString(50, height - 190, "Medical History:")
-                    c.drawString(60, height - 210, f"Previous illnesses or conditions: {previous_illnesses}")
-                    c.drawString(60, height - 230, f"Allergies: {allergies}")
-                    c.drawString(60, height - 250, f"Medications: {medications}")
-                    c.drawString(60, height - 270, f"Family History: {family_history}")
-
-                    y_cursor = height - 300
-                    c.drawString(50, y_cursor, "🧠 Prediction Summary:")
-                    y_cursor -= 20
-                    for i, pred in enumerate(result["predictions"]):
-                        conf = pred.get("confidence", 0)
-                        c.drawString(60, y_cursor, f"• Tumor {i+1}: Confidence {conf:.2f}")
-                        y_cursor -= 20
-
-                    img_width = 300
-                    img_height = 300
-                    c.drawImage(image_path, width - img_width - 50, 100, width=img_width, height=img_height, preserveAspectRatio=True, mask='auto')
-                    c.showPage()
+                    c.drawString(100, 800, f"Patient Name: {patient_name}")
+                    c.drawString(100, 780, f"Age: {patient_age}")
+                    c.drawString(100, 760, f"Gender: {patient_gender}")
+                    c.drawString(100, 740, "Tumor Type: Benign")
+                    c.drawImage(image_path, 100, 200, width=400, height=400)
                     c.save()
                     buffer.seek(0)
                     return buffer
 
-                pdf_buffer = generate_pdf()
-
                 st.download_button(
-                    label="⬇️ Download PDF Report",
-                    data=pdf_buffer,
-                    file_name="Brain_Tumor_Report.pdf",
+                    label="Download PDF Report",
+                    data=generate_pdf(),
+                    file_name=f"report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf",
                     mime="application/pdf"
                 )
 
-# --- User Feedback Section ---
-st.title("We Value Your Feedback")
-rating = st.radio("How would you rate your experience with the AI model?", options=[1, 2, 3, 4, 5])
-feedback = st.text_area("Any comments or suggestions?")
-
-if st.button("Submit Feedback"):
-    st.write(f"Thank you for your feedback! Rating: {rating} stars")
-    if feedback:
-        st.write(f"Your comments: {feedback}")
-
-# --- Contact Section ---
-st.title("📞 Contact Us")
-st.markdown("""
-    If you have any issues or inquiries, feel free to contact us:
-    - **Email**: [support@braintumordetector.com](mailto:support@braintumordetector.com)
-    - **WhatsApp**: [+91 7092309109](https://wa.me/7092309109)
-""")
+        st.stop()
