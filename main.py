@@ -14,7 +14,49 @@ import time
 # App config
 st.set_page_config(page_title="Brain Tumor Detection", page_icon="🧠", layout="centered")
 
-\
+# Initialize Translator object
+translator = Translator()
+
+# Define translations for various sections of the app
+translations = {
+    "en": {
+        "title": "Brain Tumor Detection",
+        "instructions": """
+        1. Upload a brain MRI image (JPG/PNG).
+        2. Click **Detect Tumor**.
+        3. View AI predictions.
+        4. Download PDF Report.
+        """,
+        "upload_text": "Upload your MRI scan image for AI-based analysis.",
+        "patient_info": "Patient Information",
+        "medical_history": "Medical History",
+        "data_privacy": "Data Privacy & Consent",
+        "detect_tumor": "🔍 Detect Tumor",
+        "thank_you_feedback": "Thank you for your feedback! Rating: {rating} stars",
+        "contact_us": "📞 Contact Us",
+    },
+    "es": {  # Spanish Translation
+        "title": "Detección de Tumor Cerebral",
+        "instructions": """
+        1. Cargue una imagen de MRI cerebral (JPG/PNG).
+        2. Haga clic en **Detectar Tumor**.
+        3. Ver predicciones de IA.
+        4. Descargar informe en PDF.
+        """,
+        "upload_text": "Suba su imagen de MRI para el análisis basado en IA.",
+        "patient_info": "Información del Paciente",
+        "medical_history": "Historial Médico",
+        "data_privacy": "Privacidad de los Datos y Consentimiento",
+        "detect_tumor": "🔍 Detectar Tumor",
+        "thank_you_feedback": "¡Gracias por su retroalimentación! Calificación: {rating} estrellas",
+        "contact_us": "📞 Contáctenos",
+    },
+    # Add more languages as needed
+}
+
+# Language Selector
+language = st.selectbox("Choose your language", options=["English", "Español"], index=0)
+lang_key = "en" if language == "English" else "es"
 
 # Roboflow Client
 CLIENT = InferenceHTTPClient(
