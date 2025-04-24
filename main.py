@@ -65,55 +65,6 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Light/Dark Theme Toggle
-if 'theme' not in st.session_state:
-    st.session_state.theme = 'light'
-
-def toggle_theme():
-    if st.session_state.theme == 'light':
-        st.session_state.theme = 'dark'
-    else:
-        st.session_state.theme = 'light'
-
-# Create the toggle button
-st.button("🔄 Toggle Theme", on_click=toggle_theme)
-
-# Apply custom CSS for light/dark theme
-if st.session_state.theme == 'light':
-    theme_css = """
-        <style>
-        body {
-            background-color: #ffffff;
-            color: #000000;
-        }
-        .button-style {
-            background-color: #e53935;
-            color: white;
-        }
-        .button-style:hover {
-            background-color: #d32f2f;
-        }
-        </style>
-    """
-else:
-    theme_css = """
-        <style>
-        body {
-            background-color: #121212;
-            color: #ffffff;
-        }
-        .button-style {
-            background-color: #e53935;
-            color: white;
-        }
-        .button-style:hover {
-            background-color: #d32f2f;
-        }
-        </style>
-    """
-st.markdown(theme_css, unsafe_allow_html=True)
-
-
 # Sidebar Instructions
 with st.sidebar:
     st.title("ℹ️ How to Use")
