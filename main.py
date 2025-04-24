@@ -98,6 +98,13 @@ if uploaded_file:
     patient_age = st.number_input("Age", min_value=0)
     patient_gender = st.selectbox("Gender", ["Male", "Female", "Other"])
 
+    # Medical History Section
+    st.markdown("### 📋 Medical History")
+    previous_illnesses = st.text_area("Previous illnesses or conditions")
+    allergies = st.text_area("Allergies")
+    medications = st.text_area("Medications currently taking")
+    family_history = st.text_area("Family medical history")
+
     # Button for starting detection
     if st.button("🔍 Detect Tumor", key="detect", help="Click to detect brain tumor in the MRI scan"):
         with st.spinner("Analyzing with AI model..."):
@@ -155,7 +162,7 @@ if uploaded_file:
             st.markdown("### Interactive Story")
             st.write("Here's your health journey: Step 1 - MRI Scan, Step 2 - Diagnosis, Step 3 - Treatment Recommendations.")
 
-            # PDF Generation with Patient Details and Results in Text Form
+            # PDF Generation with Patient Details and Results in Table Form
             if prediction_found:
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as temp_img_file:
                     image.save(temp_img_file.name, format="JPEG")
@@ -176,8 +183,15 @@ if uploaded_file:
                     c.drawString(50, height - 140, f"Gender: {patient_gender}")
                     c.drawString(50, height - 160, f"Image Name: {uploaded_file.name}")
 
-                    c.drawString(50, height - 190, "🧠 Prediction Summary:")
-                    y_cursor = height - 210
+                    c.drawString(50, height - 190, "Medical History:")
+                    c.drawString(60, height - 210, f"Previous illnesses or conditions: {previous_illnesses}")
+                    c.drawString(60, height - 230, f"Allergies: {allergies}")
+                    c.drawString(60, height - 250, f"Medications: {medications}")
+                    c.drawString(60, height - 270, f"Family History: {family_history}")
+
+                    y_cursor = height - 300
+                    c.drawString(50, y_cursor, "🧠 Prediction Summary:")
+                    y_cursor -= 20
                     for i, pred in enumerate(result["predictions"]):
                         conf = pred.get("confidence", 0)
                         c.drawString(60, y_cursor, f"• Tumor {i+1}: Confidence {conf:.2f}")
