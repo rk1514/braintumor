@@ -215,63 +215,46 @@ with st.container():
                             image.save(temp_img_file.name, format="JPEG")
                             image_path = temp_img_file.name
 
-                       def generate_pdf():
-    buffer = io.BytesIO()
-    c = canvas.Canvas(buffer, pagesize=A4)
-    width, height = A4
+                        def generate_pdf():
+                            buffer = io.BytesIO()
+                            c = canvas.Canvas(buffer, pagesize=A4)
+                            width, height = A4
 
-    c.setFont("Helvetica-Bold", 20)
-    c.drawCentredString(width / 2, height - 50, "Brain Tumor Detection Report")
+                            c.setFont("Helvetica-Bold", 20)
+                            c.drawCentredString(width / 2, height - 50, "Brain Tumor Detection Report")
 
-    c.setFont("Helvetica", 12)
-    c.drawString(50, height - 80, f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    c.drawString(50, height - 100, f"Patient Name: {patient_name}")
-    c.drawString(50, height - 120, f"Age: {patient_age}")
-    c.drawString(50, height - 140, f"Gender: {patient_gender}")
-    c.drawString(50, height - 160, f"Image Name: {uploaded_file.name}")
+                            c.setFont("Helvetica", 12)
+                            c.drawString(50, height - 80, f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                            c.drawString(50, height - 100, f"Patient Name: {patient_name}")
+                            c.drawString(50, height - 120, f"Age: {patient_age}")
+                            c.drawString(50, height - 140, f"Gender: {patient_gender}")
+                            c.drawString(50, height - 160, f"Image Name: {uploaded_file.name}")
 
-    c.drawString(50, height - 190, "Medical History:")
-    c.drawString(60, height - 210, f"Previous illnesses or conditions: {previous_illnesses if previous_illnesses else 'N/A'}")
-    c.drawString(60, height - 230, f"Allergies: {allergies if allergies else 'N/A'}")
-    c.drawString(60, height - 250, f"Medications: {medications if medications else 'N/A'}")
-    c.drawString(60, height - 270, f"Family History: {family_history if family_history else 'N/A'}")
+                            c.drawString(50, height - 190, "Medical History:")
+                            c.drawString(60, height - 210, f"Previous illnesses or conditions: {previous_illnesses if previous_illnesses else 'N/A'}")
+                            c.drawString(60, height - 230, f"Allergies: {allergies if allergies else 'N/A'}")
+                            c.drawString(60, height - 250, f"Medications: {medications if medications else 'N/A'}")
+                            c.drawString(60, height - 270, f"Family History: {family_history if family_history else 'N/A'}")
 
-    y_cursor = height - 300
-    c.drawString(50, y_cursor, "🧠 Prediction Summary:")
-    y_cursor -= 20
-    if result.get("predictions"):
-        for i, pred in enumerate(result["predictions"]):
-            conf = pred.get("confidence", 0)
-            c.drawString(60, y_cursor, f"• Tumor {i+1}: Confidence {conf:.2f}")
-            y_cursor -= 20
-    else:
-        c.drawString(60, y_cursor, "• No tumor detected by AI.")
-        y_cursor -= 20
+                            y_cursor = height - 300
+                            c.drawString(50, y_cursor, "🧠 Prediction Summary:")
+                            y_cursor -= 20
+                            if result.get("predictions"):
+                                for i, pred in enumerate(result["predictions"]):
+                                    conf = pred.get("confidence", 0)
+                                    c.drawString(60, y_cursor, f"• Tumor {i+1}: Confidence {conf:.2f}")
+                                    y_cursor -= 20
+                            else:
+                                c.drawString(60, y_cursor, "• No tumor detected by AI.")
+                                y_cursor -= 20
 
-    # Insert Image
-    img_width = 300
-    img_height = 300
-    c.drawImage(image_path, width - img_width - 50, 100, width=img_width, height=img_height, preserveAspectRatio=True, mask='auto')
-
-    # Feedback Section
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(50, 380, "🗣️ User Feedback")
-    c.setFont("Helvetica", 12)
-    c.drawString(50, 360, f"User Rating: {rating} / 5")
-    c.drawString(50, 340, f"Comments: {feedback if feedback else 'No comments provided.'}")
-
-    # Contact Information Section
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(50, 300, "📞 Contact Information")
-    c.setFont("Helvetica", 12)
-    c.drawString(50, 280, "Email: rkumar1514@gmail.com")
-    c.drawString(50, 260, "WhatsApp: +91 7092309109")
-
-    c.showPage()
-    c.save()
-    buffer.seek(0)
-    return buffer
-
+                            img_width = 300
+                            img_height = 300
+                            c.drawImage(image_path, width - img_width - 50, 100, width=img_width, height=img_height, preserveAspectRatio=True, mask='auto')
+                            c.showPage()
+                            c.save()
+                            buffer.seek(0)
+                            return buffer
 
                         pdf_buffer = generate_pdf()
 
