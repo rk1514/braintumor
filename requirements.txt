@@ -3,3 +3,4 @@ pillow
 inference-sdk
 opencv-python-headless
 reportlab
+requests
